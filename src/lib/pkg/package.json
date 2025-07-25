@@ -1,0 +1,19 @@
+{
+  "name": "json_merger_lib",
+  "type": "module",
+  "collaborators": [
+    "Your Name <you@example.com>"
+  ],
+  "description": "A wasm-bindgen library to generate and apply JSON merge plans.",
+  "version": "0.1.0",
+  "files": [
+    "json_merger_lib_bg.wasm",
+    "json_merger_lib.js",
+    "json_merger_lib.d.ts"
+  ],
+  "main": "json_merger_lib.js",
+  "types": "json_merger_lib.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

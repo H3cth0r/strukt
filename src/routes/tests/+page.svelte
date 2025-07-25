@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { JsonEditor } from '$lib/components';
 	import { FileDropZone } from "$lib/components/ui/file-drop-zone";
+  import init, { generate_plan, execute_plan } from './pkg/json_merger_lib.js';
 
   const jsonData = {
    _status: 'merge',
