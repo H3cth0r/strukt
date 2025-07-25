@@ -1,10 +1,9 @@
 <script lang="ts">
-import { NavBar, TagInput } from '$lib/components';
+import { NavBar, TagInput, JsonEditor } from '$lib/components';
 import * as Card from '$lib/components/ui/card/index.js';
 import { FileDropZone } from '$lib/components/ui/file-drop-zone';
 import { Button } from '$lib/components/ui/button/index.js';
 
-// 1. Import the updated stores and functions
 import {
 	uploadedFiles,
 	tags,
@@ -12,16 +11,16 @@ import {
 	generatePlan,
 	handleReset,
 	showOutputView,
-	planOutput, // Use the new name
-	mergedOutput, // Import the new store
-	executePlan // Import the new function
+	planOutput,
+	mergedOutput,
+	executePlan
 } from '$lib/scripts/formLogic';
 </script>
 
 <NavBar />
 
 {#if !$showOutputView}
-<!-- INPUT VIEW (No changes here) -->
+<!-- INPUT VIEW (No changes) -->
 <div class="flex w-full h-[90vh] items-center justify-center p-4">
 	<Card.Root class="w-full max-w-4xl">
 		<Card.Header>
@@ -64,7 +63,7 @@ import {
 	</Card.Root>
 </div>
 {:else}
-<!-- OUTPUT VIEW (Updated) -->
+<!-- OUTPUT VIEW (UPDATED) -->
 <div class="flex w-full h-[90vh] flex-col items-center justify-center p-4 gap-y-6">
 	<div class="flex w-full max-w-7xl gap-x-6" style="height: 85%;">
 		<!-- Left Card: Shows the generated Merge Plan -->
@@ -73,9 +72,9 @@ import {
 				<Card.Title class="text-2xl">Merge Plan</Card.Title>
 				<Card.Description>Review or edit the plan before executing.</Card.Description>
 			</Card.Header>
-			<Card.Content class="flex-grow overflow-auto">
-				<!-- 2. Bind to the new `planOutput` store -->
-				<pre class="text-sm">{$planOutput}</pre>
+			<Card.Content class="flex-grow overflow-hidden">
+				<!-- Use the editor in 'diff' mode -->
+				<JsonEditor content={$planOutput} mode="diff" />
 			</Card.Content>
 		</Card.Root>
 
@@ -84,13 +83,11 @@ import {
 			<Card.Header>
 				<Card.Title class="text-2xl">Final Merged Output</Card.Title>
 			</Card.Header>
-			<Card.Content class="flex-grow overflow-auto">
-				<!-- 3. Conditionally show the button or the result -->
+			<Card.Content class="flex-grow overflow-hidden">
 				{#if $mergedOutput}
-					<!-- If we have a result, show it -->
-					<pre class="text-sm">{$mergedOutput}</pre>
+					<!-- Use the editor in standard 'json' mode -->
+					<JsonEditor content={$mergedOutput} mode="json" />
 				{:else}
-					<!-- Otherwise, show the button to generate it -->
 					<div class="flex items-center justify-center h-full">
 						<Button onclick={executePlan}>Calculate Output</Button>
 					</div>
