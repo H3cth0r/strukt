@@ -17,7 +17,6 @@ import {
 } from '$lib/scripts/formLogic';
 </script>
 
-<NavBar />
 
 {#if !$showOutputView}
 <!-- INPUT VIEW (No changes) -->

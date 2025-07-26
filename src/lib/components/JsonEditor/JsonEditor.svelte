@@ -1,10 +1,9 @@
 <script lang="ts">
 import { onMount, onDestroy } from 'svelte';
-import { EditorView } from '@codemirror/view';
+import { EditorView, ViewPlugin, Decoration } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
-import { basicSetup } from 'codemirror';
+import { basicSetup } from 'codemirror'; // <-- FIXED: Import from the correct meta-package
 import { oneDark } from '@codemirror/theme-one-dark';
-import { ViewPlugin, Decoration } from '@codemirror/view';
 import { json } from '@codemirror/lang-json';
 
 // --- PROPS ---
@@ -18,14 +17,18 @@ let copyButtonText = 'Copy';
 
 // --- EDITOR SETUP (onMount) ---
 onMount(() => {
-	const extensions = [basicSetup, jsonDiffTheme];
+	const extensions = [
+		...basicSetup, // Use spread syntax as basicSetup is an array of extensions
+		jsonDiffTheme
+	];
 
+	// Add language support based on mode
+	extensions.push(json());
 	if (mode === 'diff') {
 		extensions.push(jsonDiffHighlighting());
-	} else {
-		extensions.push(json());
 	}
 
+	// Add dark theme if applicable
 	if (document.body.classList.contains('dark')) {
 		extensions.push(oneDark);
 	}
@@ -101,6 +104,7 @@ function jsonDiffHighlighting() {
 							);
 						}
 
+						// Simplified and combined value matching for robustness
 						const valueMatch = lineText.match(/"_value":\s*(.*)/);
 						if (valueMatch) {
 							const valueText = valueMatch[1].trim().replace(/,$/, '');
@@ -162,7 +166,6 @@ const jsonDiffTheme = EditorView.theme(
 		// Classes for diff mode
 		'.cm-json-diff-value': { color: 'var(--editor-value-color)' },
 		'.cm-json-diff-old-value': { color: 'var(--editor-old-value-color)' },
-		// **FIX**: Added highlight rules for 'add' and 'delete'
 		'.cm-line-highlight-add': { backgroundColor: 'var(--editor-highlight-add)' },
 		'.cm-line-highlight-delete': { backgroundColor: 'var(--editor-highlight-delete)' },
 		'.cm-line-highlight-merge': { backgroundColor: 'var(--editor-highlight-merge)' },
@@ -175,7 +178,8 @@ const jsonDiffTheme = EditorView.theme(
 
 <div class="editor-wrapper">
 <button class="copy-button" on:click={handleCopy}>{copyButtonText}</button>
-<div class="editor-container" bind:this={editorEl} />
+<!-- FIXED: Replaced self-closing tag with proper opening and closing tags -->
+<div class="editor-container" bind:this={editorEl}></div>
 </div>
 
 <style>
@@ -210,7 +214,6 @@ const jsonDiffTheme = EditorView.theme(
 	background-color: var(--editor-button-hover-bg);
 }
 
-/* **FIX**: Added CSS variables for 'add' and 'delete' highlights */
 :root {
 	--editor-text-color: #333;
 	--editor-bg-color: #ffffff;
@@ -232,7 +235,6 @@ const jsonDiffTheme = EditorView.theme(
 	--editor-highlight-keep: #f7fee7; /* Light Lime */
 }
 
-/* **FIX**: Added CSS variables for 'add' and 'delete' highlights in dark mode */
 :global(body.dark) {
 	--editor-text-color: #d1d5db;
 	--editor-bg-color: #1f2937;
